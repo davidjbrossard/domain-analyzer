@@ -89,7 +89,7 @@ out
 
 # Nuxt.js build / generate output
 .nuxt
-dist
+# dist #disabled for GH actions
 
 # Gatsby files
 .cache/
