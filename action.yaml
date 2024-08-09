@@ -1,13 +1,13 @@
-name: 'Hello World'
-description: 'Greet someone and record the time'
+name: 'AuthZ Domain Analyzer'
+description: 'Process an authorization domain and produce documentation'
 inputs:
-  who-to-greet:  # id of input
-    description: 'Who to greet'
+  domain-file:  # id of input
+    description: 'The authorization domain file to be processed'
     required: true
-    default: 'World'
+    default: './domain.yaml'
 outputs:
-  time: # id of output
-    description: 'The time we greeted you'
+  report: # id of output
+    description: 'The content of the markdown file'
 runs:
   using: 'node20'
   main: 'index.js'
