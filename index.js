@@ -4,10 +4,10 @@ const yaml = require('js-yaml');
 const fs = require('fs');
 const { XMLParser, XMLBuilder, XMLValidator } = require("fast-xml-parser");
 
-function parseXACML(xmlContent) {
+function parseXACML(xacmlContent) {
 
     const parser = new XMLParser();
-    let jObj = parser.parse(xmlContent);
+    let jObj = parser.parse(xacmlContent);
 
 
     const builder = new XMLBuilder();
