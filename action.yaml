@@ -5,9 +5,10 @@ inputs:
     description: 'The authorization domain file to be processed'
     required: true
     default: './domain.yaml'
-outputs:
-  report: # id of output
-    description: 'The content of the markdown file'
+  output-file:  # id of input
+    description: 'The output md file'
+    required: true
+    default: './domain.md'
 runs:
   using: 'node20'
   main: 'index.js'
