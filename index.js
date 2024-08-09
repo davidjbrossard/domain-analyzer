@@ -8,7 +8,7 @@ function parseXACML(xmlContent) {
 
     const parser = new XMLParser();
     let jObj = parser.parse(xmlContent);
-    
+
 
     const builder = new XMLBuilder();
     const xmlContent = builder.build(jObj);
@@ -21,12 +21,12 @@ function generateDocumentation(title, attributes, policies) {
     documentation += "## Policy Overview\n";
     for (var policy in policies) {
         p = parseXACML(policy);
-        documentation += " - " + "some name" +"\n";
+        documentation += " - " + "some name" + "\n";
 
     }
     documentation += "## Attribute Overview\n";
-    for (var attribute in attributes){
-        documentation+= " - "+ attribute.xacmlId+"\n";
+    for (var attribute in attributes) {
+        documentation += " - " + attribute.xacmlId + "\n";
     }
     return documentation;
 }
@@ -41,10 +41,10 @@ try {
 
     // Write data in 'Output.txt' .
     fs.writeFile(outputFile, generateDocumentation("Documentation for domain " + yamlData.identity, yamlData.attributes, yamlData.policy.xacmlSpecifications), (err) => {
-
         // In case of a error throw err.
         if (err) throw err;
     })
+    console.log('Wrote md file to '+outputFile);
 } catch (error) {
     core.setFailed(error.message);
 }
