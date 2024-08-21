@@ -52,9 +52,10 @@ function parseXACML(xacmlContent) {
         for (var block of BLOCK_TYPES){
             let nodes = selector('//xacml3:'+block,doc);
             let bs = parseBlocks(block, nodes);
-            bs.forEach((b)=>{
-                ps.push(b);
-            });
+            ps = ps.concat(bs);
+            // bs.forEach((b)=>{
+            //     ps.push(b);
+            // });
         }
         
     } catch (error) {
@@ -67,30 +68,35 @@ function generateDocumentation(title, attributes, policies) {
     let documentation = "";
     let intro = "";
     // 1. Add Title
-    documentation += "# " + title + "\n";
-    documentation += "## Overview\n";
-    documentation += " - Number of YAML policy entries: "+policies.length+"\n";
-    documentation += " - Number of XACML Policy Sets: "+policies.length+"\n";
-    documentation += " - Number of XACML Policies: "+policies.length+"\n";
-    documentation += " - Number of XACML Rules: "+policies.length+"\n";
-    documentation += " - Number of attributes: "+Object.entries(attributes).length+"\n";
-    documentation += "## Policy Overview\n";
-    let i = 1;
-    policies.forEach((policy)=>{
-        let ps = parseXACML(policy);
-        ps.forEach((xacmlPolicy)=>{
-            documentation += " - [" + xacmlPolicy.identifier + "](#"+xacmlPolicy.identifier+")\n";
-            if (xacmlPolicy.description.length>0)
-                documentation += "   - "+xacmlPolicy.description+ "\n";
-                documentation += "   - parent: ["+xacmlPolicy.parent+ "](#"+xacmlPolicy.parent+")\n";
-        });
-    });
+    intro += "# " + title + "\n";
+    intro += "## Overview\n";
+    intro += " - Number of attributes: "+Object.entries(attributes).length+"\n";
+    intro += " - Number of YAML policy entries: "+policies.length+"\n";
+    // 2. Parse attributes from YAML definition
     documentation += "## Attribute Overview\n";
     for (const [key, value] of Object.entries(attributes)) {
         documentation += " - " + value.xacmlId + "\n";
         documentation += "   - " + value.category + "\n";
         documentation += "   - " + value.datatype + "\n";
     }
+    // 3. Parse all policies
+    let stats = {
+        'PolicySet': 0,
+        'Policy': 0,
+        'Rule' : 0
+    }
+    documentation += "## Policy Overview\n";
+    policies.forEach((policy)=>{
+        let ps = parseXACML(policy);
+        ps.forEach((xacmlPolicy)=>{
+            documentation += " - [" + xacmlPolicy.identifier + "](#"+xacmlPolicy.identifier+")\n";
+            if (xacmlPolicy.description.length>0)
+                documentation += "   - "+xacmlPolicy.description+ "\n";
+            documentation += "   - parent: ["+xacmlPolicy.parent+ "](#"+xacmlPolicy.parent+")\n";
+            stats[xacmlPolicy.type]++;
+        });
+    });
+    // 4. Add warnings section
     if (warnings.length>0){
         documentation += "## Warnings & Recommendations\n";
         warnings.forEach((warning)=>{
@@ -99,7 +105,13 @@ function generateDocumentation(title, attributes, policies) {
             documentation+= "   - "+warning.location+"\n";
         });
     }
+    
+    // 5. Update metrics
+    intro += " - Number of XACML Policy Sets: "+stats['PolicySet']+"\n";
+    intro += " - Number of XACML Policies: "+stats['Policy']+"\n";
+    intro += " - Number of XACML Rules: "+stats['Rule']+"\n";
 
+    documentation = intro + documentation;
     return documentation;
 }
 
